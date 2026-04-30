@@ -28,7 +28,7 @@ class NovelController extends Controller
         ]);
     }
 
-    public function detail($id) {
+    public function detail($slug) {
         $data = Novel::with('author')->with('genres')->with('categories')->with('comments.user')->with([
             'volumes' => function($query) {
                 $query->orderBy('no');
@@ -36,7 +36,7 @@ class NovelController extends Controller
             'volumes.chapters' => function($query) {
                 $query->orderBy('no');
             }
-        ])->where('id', $id)->first();
+        ])->where('slug', $slug)->first();
         if(!$data) {
             abort(404);
         }
@@ -53,7 +53,7 @@ class NovelController extends Controller
         ]);
     }
 
-    public function content(Request $request, $id) {
+    public function content(Request $request, $slug) {
         $volume = $request->query('volume');
         $chapter = $request->query('chapter');
         $data = Novel::with('author')->with([
@@ -64,7 +64,7 @@ class NovelController extends Controller
                 $query->where('no', $chapter);
             },
             'volumes.chapters.content'
-        ])->where('id', $id)->first();
+        ])->where('slug', $slug)->first();
         if(!$data) {
             abort(404);
         }
@@ -89,7 +89,9 @@ class NovelController extends Controller
             $validated['cover'] = $path;
         }
 
-        Novel::create($validated);
+        $novel = Novel::create($validated);
+        $novel->slug = \Str::slug($novel->title) . '-' . $novel->id;
+        $novel->save();
 
         return redirect()->route('author.dashboard')->with('message', 'Novel berhasil dibuat!');
     }

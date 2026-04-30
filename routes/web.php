@@ -14,9 +14,9 @@ Route::get("/", function () {
 
 Route::get("/home", [NovelController::class, 'home'])->name('home');
 
-Route::get("/detail/{id}", [NovelController::class, 'detail'])->name('detail');
+Route::get("/detail/{slug}", [NovelController::class, 'detail'])->name('detail');
 
-Route::get("/content/{id}/", [NovelController::class, 'content'])->name('content');
+Route::get("/content/{slug}/", [NovelController::class, 'content'])->name('content');
 
 // Counters (public — called via fetch, no Inertia redirect)
 Route::post('/novel/{id}/read', [NovelController::class, 'incrementRead'])->name('novel.read');

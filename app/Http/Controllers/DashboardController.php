@@ -70,6 +70,10 @@ class DashboardController extends Controller
             $validated['cover'] = $request->file('cover')->store('covers', 'public');
         }
 
+        if (isset($validated['title'])) {
+            $validated['slug'] = \Str::slug($validated['title']) . '-' . $novel->id;
+        }
+
         $novel->update($validated);
 
         return redirect()->route('author.dashboard')->with('message', 'Novel updated!');
@@ -302,6 +306,10 @@ class DashboardController extends Controller
         if ($request->hasFile('cover')) {
             if ($novel->cover) Storage::disk('public')->delete($novel->cover);
             $validated['cover'] = $request->file('cover')->store('covers', 'public');
+        }
+
+        if (isset($validated['title'])) {
+            $validated['slug'] = \Str::slug($validated['title']) . '-' . $novel->id;
         }
 
         $novel->update($validated);
